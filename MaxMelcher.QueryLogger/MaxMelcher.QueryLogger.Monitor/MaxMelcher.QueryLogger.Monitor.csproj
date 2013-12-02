@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LogEntry.cs" />
+    <Compile Include="DirectoryMonitor.cs" />
     <Compile Include="LogMonitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

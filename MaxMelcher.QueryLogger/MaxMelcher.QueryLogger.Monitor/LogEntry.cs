@@ -9,7 +9,7 @@ namespace MaxMelcher.QueryLogger.Monitor
     {
         public string Timestamp { get; set; }
         public string Process { get; set; }
-        public string TID { get; set; }
+        public string Thread { get; set; }
         public string Area { get; set; }
         public string Category { get; set; }
         public string EventID { get; set; }
@@ -29,7 +29,7 @@ namespace MaxMelcher.QueryLogger.Monitor
                 {
                     Timestamp = fields[0].Trim(),
                     Process = fields[1].Trim(),
-                    TID = fields[2].Trim(),
+                    Thread = fields[2].Trim(),
                     Area = fields[3].Trim(),
                     Category = fields[4].Trim(),
                     EventID = fields[5].Trim(),

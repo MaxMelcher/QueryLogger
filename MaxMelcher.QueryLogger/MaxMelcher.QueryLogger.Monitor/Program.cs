@@ -10,8 +10,8 @@ namespace MaxMelcher.QueryLogger.Monitor
     {
         static void Main(string[] args)
         {
-            LogMonitor log = new LogMonitor();
-            Task t = log.Start();
+            DirectoryMonitor directory = new DirectoryMonitor();
+            Task t = directory.Start();
             t.Wait();
 
         }

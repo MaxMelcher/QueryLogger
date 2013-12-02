@@ -11,24 +11,24 @@ namespace Monitor.Tests
         [TestMethod]
         public void AfterStartTheLogMonitorWatchesForNewFiles()
         {
-            LogMonitor log = new LogMonitor();
-            log.Start();
+            DirectoryMonitor directory = new DirectoryMonitor();
+            directory.Start();
 
-            log.MonitorTask.Wait();
+            directory.MonitorTask.Wait();
 
-            Assert.IsFalse(string.IsNullOrEmpty(log.LogFilePath));
+            Assert.IsFalse(string.IsNullOrEmpty(directory.LogFilePath));
         }
 
         [TestMethod]
         public void TheLogFilePathChangesAfterANewFileIsCreated()
         {
-            LogMonitor log = new LogMonitor();
-            log.Start();
+            DirectoryMonitor directory = new DirectoryMonitor();
+            directory.Start();
 
-            log.MonitorTask.Wait();
-            Assert.IsFalse(string.IsNullOrEmpty(log.LogFilePath));
+            directory.MonitorTask.Wait();
+            Assert.IsFalse(string.IsNullOrEmpty(directory.LogFilePath));
 
-            FileInfo file = new FileInfo(log.LogFilePath);
+            FileInfo file = new FileInfo(directory.LogFilePath);
 
             string testFile = Path.Combine(file.Directory.FullName, "test.log");
 
@@ -41,9 +41,9 @@ namespace Monitor.Tests
             File.CreateText(testFile);
 
             //wait for the file event to trigger
-            Thread.Sleep(500);
+            Thread.Sleep(1200);
 
-            Assert.AreEqual(testFile, log.LogFilePath);
+            Assert.AreEqual(testFile, directory.LogFilePath);
         }
     }
 }

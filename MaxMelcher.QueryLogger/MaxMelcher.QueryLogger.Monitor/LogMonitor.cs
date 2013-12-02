@@ -1,77 +1,64 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-
-
-//TODO switch to log4net for logging
-//TODO parse the last line
-//comment
+using Microsoft.SharePoint.Administration;
 
 namespace MaxMelcher.QueryLogger.Monitor
 {
     public class LogMonitor
     {
-        /// <summary>
-        /// This is the inner task that handles the actual monitoring
-        /// </summary>
-        public Task MonitorTask;
+        public string LogFilePath { get; set; }
+        public readonly TaskCompletionSource<object> _tcs = new TaskCompletionSource<object>();
+        public CancellationTokenSource _cts;
 
-        readonly FileSystemWatcher _watcherFolder = new FileSystemWatcher();
-        readonly FileSystemWatcher _watcherFile = new FileSystemWatcher();
-        readonly TaskCompletionSource<object> _tcs = new TaskCompletionSource<object>();
+        readonly char[] _seperators = { '\r', '\n' };
 
-        public string LogFilePath;
+        public Task LogMonitorTask;
 
-        /// <summary>
-        /// Starts watching for folder changes
-        /// </summary>
-        /// <returns></returns>
         public Task Start()
         {
-            MonitorTask = Task.Factory.StartNew(MonitorFolder);
+            Console.WriteLine("Starting LogMonitor");
+            _cts = new CancellationTokenSource();
+            LogMonitorTask = Task.Factory.StartNew(Watch,_cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             return _tcs.Task;
         }
 
-        private void MonitorFolder()
+        public void Watch()
         {
             try
             {
-                string logsLocation = SPUtility.GetLogsLocation();
-                _watcherFolder.Path = logsLocation;
-                _watcherFolder.Filter = "*.log";
-
-                Console.WriteLine("Monitoring Folder {0}", logsLocation);
-
-                string logFile = SPUtility.GetLastAccessedFile(logsLocation);
-                _watcherFile.Path = logsLocation;
-
-                var dirInfo = new DirectoryInfo(logsLocation);
-                var file = dirInfo.GetFiles().OrderByDescending(f => f.LastWriteTime).FirstOrDefault();
-
-                if (file == null)
+                using (var stream = new FileStream(LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    Console.WriteLine("No log file found in {0}", logsLocation);
-                    throw new Exception(string.Format("No log file found {0}", logsLocation));
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        reader.ReadToEnd();
+                        string cache = String.Empty;
+                        while (!_cts.IsCancellationRequested)
+                        {
+                            Thread.Sleep(1000);
+                            if (reader.EndOfStream)
+                                continue;
+                            cache += reader.ReadToEnd();
+                            string[] lines = cache.Split(_seperators, StringSplitOptions.RemoveEmptyEntries);
+                            
+                            //wait until we have a proper line
+                            cache = cache.EndsWith("\n") ? String.Empty : lines.Last();
+                            
+                            int validLines = cache == String.Empty ? lines.Length : lines.Length - 1;
+
+                            foreach (string line in lines.Take(validLines))
+                            {
+                                
+                                LogEntry l = LogEntry.Parse(line);
+
+                                Console.WriteLine("{0} {1} {2}", l.Timestamp, l.Process, l.Thread);
+                            }
+                        }
+                        Console.WriteLine("LogMonitor stopped");
+                    }
                 }
-
-                _watcherFile.Filter = file.Name;
-                _watcherFile.NotifyFilter = NotifyFilters.LastWrite;
-                LogFilePath = file.FullName;
-
-                Console.WriteLine("Monitoring Logfile for write changes: {0} ", logFile);
-
-                _watcherFolder.Created += (sender, args) =>
-                {
-                    Console.WriteLine("File {0} created", args.FullPath);
-                    _watcherFile.Filter = args.Name;
-                    LogFilePath = args.FullPath;
-                };
-
-                _watcherFile.Changed += logfileChanged;
-
-                _watcherFile.EnableRaisingEvents = true;
-                _watcherFolder.EnableRaisingEvents = true;
             }
             catch (Exception ex)
             {
@@ -79,16 +66,10 @@ namespace MaxMelcher.QueryLogger.Monitor
             }
         }
 
-        void logfileChanged(object sender, FileSystemEventArgs e)
-        {
-            Console.WriteLine("Logfile {0} changed", e.FullPath);
-        }
-
         public void Stop()
         {
-            _watcherFile.EnableRaisingEvents = false;
-            _watcherFolder.EnableRaisingEvents = false;
-            _tcs.TrySetCanceled();
+            Console.WriteLine("Stopping LogMonitor");            
+            _cts.Cancel();
         }
     }
 }
