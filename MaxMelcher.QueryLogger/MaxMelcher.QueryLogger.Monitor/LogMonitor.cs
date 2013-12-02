@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.SharePoint.Administration;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Client;
+using MaxMelcher.QueryLogger.SignalrConsoleHost;
 
 namespace MaxMelcher.QueryLogger.Monitor
 {
@@ -16,6 +19,7 @@ namespace MaxMelcher.QueryLogger.Monitor
         readonly char[] _seperators = { '\r', '\n' };
 
         public Task LogMonitorTask;
+        IHubProxy hub;
 
         public LogMonitor(string logFilePath)
         {
@@ -30,6 +34,13 @@ namespace MaxMelcher.QueryLogger.Monitor
             Console.WriteLine("Starting LogMonitor for file: {0}", LogFilePath);
             _cts = new CancellationTokenSource();
             LogMonitorTask = Task.Factory.StartNew(Watch,_cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+            var hubConnection = new HubConnection("http://localhost:8080");
+
+            hub = hubConnection.CreateHubProxy("MyHub");
+            //stockTickerHubProxy.On<Stock>("UpdateStockPrice", stock => Console.WriteLine("Stock update for {0} new price {1}", stock.Symbol, stock.Price));
+            hubConnection.Start().Wait();
+
             return _tcs.Task;
         }
 
@@ -62,6 +73,8 @@ namespace MaxMelcher.QueryLogger.Monitor
                                 LogEntry l = LogEntry.Parse(line);
 
                                 Console.WriteLine("{0} {1} {2}", l.Timestamp, l.Process, l.Thread);
+                                string message = string.Format("{0} {1} {2} {3}", l.Timestamp, l.Process, l.Thread, l.Message);
+                                hub.Invoke("Notify", message);
                             }
                         }
                         Console.WriteLine("LogMonitor stopped");
