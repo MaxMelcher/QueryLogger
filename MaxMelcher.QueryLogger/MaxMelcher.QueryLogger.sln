@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxMelcher.QueryLogger.Monitor", "MaxMelcher.QueryLogger.Monitor\MaxMelcher.QueryLogger.Monitor.csproj", "{7CC335F2-3FD4-45FA-A90C-01A5E09C6B5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C781DB76-5D5D-4784-B568-5E9739CC4975}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor.Tests", "Monitor.Tests\Monitor.Tests.csproj", "{6373F71C-8A0B-47D9-89E1-ECEE16E76BAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7CC335F2-3FD4-45FA-A90C-01A5E09C6B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CC335F2-3FD4-45FA-A90C-01A5E09C6B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CC335F2-3FD4-45FA-A90C-01A5E09C6B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CC335F2-3FD4-45FA-A90C-01A5E09C6B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6373F71C-8A0B-47D9-89E1-ECEE16E76BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6373F71C-8A0B-47D9-89E1-ECEE16E76BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6373F71C-8A0B-47D9-89E1-ECEE16E76BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6373F71C-8A0B-47D9-89E1-ECEE16E76BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6373F71C-8A0B-47D9-89E1-ECEE16E76BAB} = {C781DB76-5D5D-4784-B568-5E9739CC4975}
+	EndGlobalSection
+EndGlobal
