@@ -17,9 +17,17 @@ namespace MaxMelcher.QueryLogger.Monitor
 
         public Task LogMonitorTask;
 
+        public LogMonitor(string logFilePath)
+        {
+            LogFilePath = logFilePath;
+        }
+        /// <summary>
+        /// Starts the watching of a log file
+        /// </summary>
+        /// <returns></returns>
         public Task Start()
         {
-            Console.WriteLine("Starting LogMonitor");
+            Console.WriteLine("Starting LogMonitor for file: {0}", LogFilePath);
             _cts = new CancellationTokenSource();
             LogMonitorTask = Task.Factory.StartNew(Watch,_cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             return _tcs.Task;
@@ -57,6 +65,7 @@ namespace MaxMelcher.QueryLogger.Monitor
                             }
                         }
                         Console.WriteLine("LogMonitor stopped");
+                        _tcs.SetResult(null);
                     }
                 }
             }
@@ -65,7 +74,9 @@ namespace MaxMelcher.QueryLogger.Monitor
                 _tcs.SetException(ex);
             }
         }
-
+        /// <summary>
+        /// Stops the watching of a file
+        /// </summary>
         public void Stop()
         {
             Console.WriteLine("Stopping LogMonitor");            

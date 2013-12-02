@@ -20,8 +20,8 @@ namespace MaxMelcher.QueryLogger.Monitor
 
         readonly FileSystemWatcher _watcherFolder = new FileSystemWatcher();
         readonly TaskCompletionSource<object> _tcs = new TaskCompletionSource<object>();
-        readonly LogMonitor _logMonitor = new LogMonitor();
-
+        private LogMonitor _logMonitor;
+        private Task taskLogMonitor;
 
         public string LogFilePath;
 
@@ -58,20 +58,25 @@ namespace MaxMelcher.QueryLogger.Monitor
                 LogFilePath = file.FullName;
 
                 //attach a LogMonitor to the file
-                _logMonitor.LogFilePath = LogFilePath;
-                _logMonitor.Start();
+                _logMonitor = new LogMonitor(LogFilePath);
+                taskLogMonitor = _logMonitor.Start();
 
                 _watcherFolder.Created += (sender, args) =>
                 {
                     Console.WriteLine("File {0} created", args.FullPath);
-                    
                     LogFilePath = args.FullPath;
 
+                    //stop the task
                     _logMonitor.Stop();
-                    _logMonitor.LogFilePath = LogFilePath;
-                    _logMonitor.Start();
-                };
 
+                    //wait for the stop
+                    taskLogMonitor.Wait();
+                    
+                    //start a new task
+                    _logMonitor = new LogMonitor(LogFilePath);
+                    LogFilePath = args.FullPath;
+                    taskLogMonitor = _logMonitor.Start();
+                };
 
                 _watcherFolder.EnableRaisingEvents = true;
             }
@@ -80,7 +85,9 @@ namespace MaxMelcher.QueryLogger.Monitor
                 _tcs.SetException(ex);
             }
         }
-
+        /// <summary>
+        /// Stops the watching
+        /// </summary>
         public void Stop()
         {
             _watcherFolder.EnableRaisingEvents = false;
