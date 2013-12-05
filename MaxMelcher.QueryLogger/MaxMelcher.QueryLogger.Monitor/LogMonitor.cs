@@ -35,7 +35,7 @@ namespace MaxMelcher.QueryLogger.Monitor
             _cts = new CancellationTokenSource();
             LogMonitorTask = Task.Factory.StartNew(Watch,_cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-            var hubConnection = new HubConnection("http://localhost:8080");
+            var hubConnection = new HubConnection("http://sharepoint2013:8080");
 
             hub = hubConnection.CreateHubProxy("MyHub");
             //stockTickerHubProxy.On<Stock>("UpdateStockPrice", stock => Console.WriteLine("Stock update for {0} new price {1}", stock.Symbol, stock.Price));

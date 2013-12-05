@@ -27,8 +27,16 @@ namespace MaxMelcher.QueryLogger.Monitor
             {
                 try
                 {
+                    // Check for SP2010
+                    var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\14.0\WSS"); // Needed because SP2013 has 14.0 Key too
+                    if (key != null)
+                    {
+                        key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\14.0");
+                        return SPVersion.SP2010;
+                    }
+
                     // Check for SP2013
-                    var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\15.0\WSS");
+                    key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\15.0\WSS");
                     if (key != null)
                     {
                         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\15.0");
@@ -172,11 +180,22 @@ namespace MaxMelcher.QueryLogger.Monitor
 
         static RegistryKey GetWSSRegistryKey()
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\15.0");
-            if (key == null)
+            Console.WriteLine("Getting key");
+            // Check for SP2010
+            var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\14.0\WSS"); // Needed because SP2013 has 14.0 Key too
+            if (key != null)
+            {
                 key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\14.0");
-            else if (key == null)
-                key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\12.0");
+                return key;
+            }
+
+            // Check for SP2013
+            key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\15.0\WSS");
+            if (key != null)
+            {
+                key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\15.0");
+                return key;
+            }
             return key;
         }
 
@@ -193,15 +212,20 @@ namespace MaxMelcher.QueryLogger.Monitor
         {
             string logLocation = String.Empty;
             Type diagSvcType = null;
-            if (SPUtility.SPVersion == SPVersion.SP2013)
+            if (SPUtility.SPVersion == SPVersion.SP2010)
+                diagSvcType = Type.GetType("Microsoft.SharePoint.Administration.SPDiagnosticsService, Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c");
+            else if (SPUtility.SPVersion == SPVersion.SP2013)
                 diagSvcType = Type.GetType("Microsoft.SharePoint.Administration.SPDiagnosticsService, Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c");
 
             if (diagSvcType != null)
             {
+                Console.WriteLine("Found service type");
                 PropertyInfo propLocalDiagSvc = diagSvcType.GetProperty("Local", BindingFlags.Public | BindingFlags.Static);
                 object localDiagSvc = propLocalDiagSvc.GetValue(null, null);
                 PropertyInfo property = localDiagSvc.GetType().GetProperty("LogLocation");
                 logLocation = (string)property.GetValue(localDiagSvc, null);
+                Console.WriteLine("LogLocation: " + logLocation);
+                Console.ReadKey();
             }
 
             return logLocation;

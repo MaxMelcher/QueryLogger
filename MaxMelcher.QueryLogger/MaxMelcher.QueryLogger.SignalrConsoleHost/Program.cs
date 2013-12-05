@@ -11,7 +11,7 @@ namespace MaxMelcher.QueryLogger.SignalrConsoleHost
     {
         static void Main(string[] args)
         {
-            string url = "http://localhost:8080";
+            string url = "http://sharepoint2013:8080";
             using (WebApp.Start<Startup>(url))
             {
                 Console.WriteLine("Server running on {0}", url);
