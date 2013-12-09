@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MaxMelcher.QueryLogger.Monitor
+﻿namespace MaxMelcher.QueryLogger.Utils
 {
     /// <copyright>
     /// This class is copied from the SharePoint LogViewer: http://sharepointlogviewer.codeplex.com/SourceControl/latest#SharePointLogViewer/SPUtility.cs
@@ -48,6 +43,11 @@ namespace MaxMelcher.QueryLogger.Monitor
             }
             else
                 return null;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2}", Category, Level, Message);
         }
     }
 }

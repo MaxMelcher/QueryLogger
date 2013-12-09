@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="27abc9bb-4b6a-4820-93f3-e4580a4029a5" solutionId="27abc9bb-4b6a-4820-93f3-e4580a4029a5" resetWebServer="false" sharePointProductVersion="15.0" name="MaxMelcher.QueryLogger.WebParts" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="1cf64a36-033e-4c30-82c5-c812edfd2df1" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="d16acfe2-d0e6-41d6-8d14-2f4db16a0c7f" />
+  </projectItems>
+</package>

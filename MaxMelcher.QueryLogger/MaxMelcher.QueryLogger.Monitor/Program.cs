@@ -13,7 +13,6 @@ namespace MaxMelcher.QueryLogger.Monitor
             DirectoryMonitor directory = new DirectoryMonitor();
             Task t = directory.Start();
             t.Wait();
-
         }
     }
 }

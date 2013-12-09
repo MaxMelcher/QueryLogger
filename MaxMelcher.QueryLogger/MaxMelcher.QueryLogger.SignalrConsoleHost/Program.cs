@@ -1,4 +1,5 @@
 ﻿using System;
+using MaxMelcher.QueryLogger.Utils;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Hosting;
 using Owin;
@@ -22,9 +23,9 @@ namespace MaxMelcher.QueryLogger.SignalrConsoleHost
         
         
     }
-    public class MyHub : Hub
+    public class UlsHub : Hub
     {
-        public void Notify(string message)
+        public void Notify(LogEntry message)
         {
             Console.WriteLine("Message: {0}", message);
             Clients.All.addMessage(message);

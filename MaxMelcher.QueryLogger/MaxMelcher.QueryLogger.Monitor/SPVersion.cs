@@ -10,7 +10,6 @@
     enum SPVersion
     {
         Unknown,
-        SP2010,
         SP2013
     }
 }

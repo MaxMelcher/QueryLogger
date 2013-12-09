@@ -40,8 +40,6 @@ namespace MaxMelcher.QueryLogger.Monitor
         {
             try
             {
-                Console.WriteLine("IsWSSInstalled installed:" + SPUtility.IsWSSInstalled);
-                Console.WriteLine("IsMOSSInstalled installed:" + SPUtility.IsMOSSInstalled);
                 string logsLocation = SPUtility.GetLogsLocation();
                 _watcherFolder.Path = logsLocation;
                 _watcherFolder.Filter = "*.log";

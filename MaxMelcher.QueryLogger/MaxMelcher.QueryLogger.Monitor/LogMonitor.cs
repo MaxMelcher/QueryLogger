@@ -3,10 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.SharePoint.Administration;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Client;
-using MaxMelcher.QueryLogger.SignalrConsoleHost;
+using MaxMelcher.QueryLogger.Utils;
 
 namespace MaxMelcher.QueryLogger.Monitor
 {
@@ -37,8 +36,7 @@ namespace MaxMelcher.QueryLogger.Monitor
 
             var hubConnection = new HubConnection("http://sharepoint2013:8080");
 
-            hub = hubConnection.CreateHubProxy("MyHub");
-            //stockTickerHubProxy.On<Stock>("UpdateStockPrice", stock => Console.WriteLine("Stock update for {0} new price {1}", stock.Symbol, stock.Price));
+            hub = hubConnection.CreateHubProxy("UlsHub");
             hubConnection.Start().Wait();
 
             return _tcs.Task;
@@ -70,11 +68,9 @@ namespace MaxMelcher.QueryLogger.Monitor
                             foreach (string line in lines.Take(validLines))
                             {
                                 
-                                LogEntry l = LogEntry.Parse(line);
-
-                                Console.WriteLine("{0} {1} {2}", l.Timestamp, l.Process, l.Thread);
-                                string message = string.Format("{0} {1} {2} {3}", l.Timestamp, l.Process, l.Thread, l.Message);
-                                hub.Invoke("Notify", message);
+                                LogEntry logentry = LogEntry.Parse(line);
+                                Console.WriteLine("{0} {1} {2}", logentry.Timestamp, logentry.Process, logentry.Thread);
+                                hub.Invoke("Notify", logentry);
                             }
                         }
                         Console.WriteLine("LogMonitor stopped");
