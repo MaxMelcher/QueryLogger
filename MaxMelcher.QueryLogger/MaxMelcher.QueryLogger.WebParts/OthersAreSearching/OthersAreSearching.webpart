@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<webParts>
+  <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
+    <metaData>
+      <type name="MaxMelcher.QueryLogger.WebParts.OthersAreSearching.OthersAreSearching, $SharePoint.Project.AssemblyFullName$" />
+      <importErrorMessage>$Resources:core,ImportErrorMessage;</importErrorMessage>
+    </metaData>
+    <data>
+      <properties>
+        <property name="Title" type="string">What are others searching right now?</property>
+        <property name="Description" type="string">WebPart Shows what other people are searching in real-time</property>
+      </properties>
+    </data>
+  </webPart>
+</webParts>

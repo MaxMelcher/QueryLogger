@@ -1,0 +1,24 @@
+﻿<Window x:Class="SearchQueryTool.PropertiesDetail"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="All Properties of Item" Height="770" Width="584">
+    <StackPanel>
+        <Label>Url:</Label>
+        <TextBox BorderBrush="Transparent" BorderThickness="0">http://melcher.it</TextBox>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ListBox ItemsSource="{Binding Path=Item}" SelectedValuePath="Value">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Black" BorderThickness="2">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=Value}" />
+                                <TextBlock Text="{Binding Path=Key}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+    </StackPanel>
+</Window>

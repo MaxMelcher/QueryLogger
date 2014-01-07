@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxMelcher.QueryLogger.Util
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxMelcher.QueryLogger.WebParts", "MaxMelcher.QueryLogger.WebParts\MaxMelcher.QueryLogger.WebParts.csproj", "{9E9553DE-EA9A-4F31-9013-F8F4DADACBCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchQueryTool", "SearchQueryTool\SearchQueryTool.csproj", "{DE9E8C75-7585-4351-BA62-E32ED11C4169}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{9E9553DE-EA9A-4F31-9013-F8F4DADACBCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E9553DE-EA9A-4F31-9013-F8F4DADACBCE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9E9553DE-EA9A-4F31-9013-F8F4DADACBCE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{DE9E8C75-7585-4351-BA62-E32ED11C4169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE9E8C75-7585-4351-BA62-E32ED11C4169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE9E8C75-7585-4351-BA62-E32ED11C4169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE9E8C75-7585-4351-BA62-E32ED11C4169}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

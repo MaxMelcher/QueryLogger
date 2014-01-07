@@ -7,17 +7,17 @@ using System.Web.UI.WebControls.WebParts;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebControls;
 
-namespace MaxMelcher.QueryLogger.WebParts.VisualWebPart2
+namespace MaxMelcher.QueryLogger.WebParts.OthersAreSearching
 {
     [ToolboxItemAttribute(false)]
-    public class VisualWebPart2 : WebPart
+    public class OthersAreSearching : WebPart
     {
         // Visual Studio might automatically update this path when you change the Visual Web Part project item.
-        private const string _ascxPath = @"~/_CONTROLTEMPLATES/15/MaxMelcher.QueryLogger.WebParts/VisualWebPart2/VisualWebPart2UserControl.ascx";
+        private const string _ascxPath = @"~/_CONTROLTEMPLATES/15/MaxMelcher.QueryLogger.WebParts/OthersAreSearching/OthersAreSearchingUserControl.ascx";
 
         protected override void CreateChildControls()
         {
-            VisualWebPart2UserControl control = (VisualWebPart2UserControl)Page.LoadControl(_ascxPath);
+            OthersAreSearchingUserControl control = (OthersAreSearchingUserControl)Page.LoadControl(_ascxPath);
             control.HubUrl = HubUrl;
             Controls.Add(control);
         }
@@ -28,6 +28,5 @@ namespace MaxMelcher.QueryLogger.WebParts.VisualWebPart2
         Personalizable(PersonalizationScope.Shared),
         Category("SignalR"), DefaultValue("http://sharepoint2013:8080/")]
         public string HubUrl { get; set; }
-
     }
 }

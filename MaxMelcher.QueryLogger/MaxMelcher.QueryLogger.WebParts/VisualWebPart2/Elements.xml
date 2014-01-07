@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Elements xmlns="http://schemas.microsoft.com/sharepoint/" >
-  <Module Name="VisualWebPart2" List="113" Url="_catalogs/wp">
-    <File Path="VisualWebPart2\VisualWebPart2.webpart" Url="MaxMelcher.QueryLogger.WebParts_VisualWebPart2.webpart" Type="GhostableInLibrary" >
-      <Property Name="Group" Value="Custom" />
-    </File>
-  </Module>
-</Elements>

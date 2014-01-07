@@ -1,0 +1,1168 @@
+﻿<Window x:Class="SearchQueryTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Icon="Images/sp_site.png"
+        Title="SharePoint 2013 Search Query Tool" Height="820" Width="1100" MinWidth="960" MinHeight="780">
+    <Window.Resources>
+        <DrawingImage x:Key="Overlay">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0 0 16 16" ImageSource="Images/search_icon.png"></ImageDrawing>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+    </Window.Resources>
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo ProgressState="Normal" Overlay="{StaticResource Overlay}">
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.4*" MaxWidth="430"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.ColumnSpan="2">
+            <MenuItem Header="File">
+                <MenuItem Header="Save Connection Properties" Click="MenuSaveConnectionProperties_Click" />
+                <MenuItem Header="Exit" Click="MenuFileExit_Click" />
+            </MenuItem>
+
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Click="MenuAbout_Click" />
+            </MenuItem>
+        </Menu>
+
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="10,10,10,0">
+            <Button Padding="8" 
+                    IsDefault="{Binding ElementName= QueryTextBox, Path=IsKeyboardFocused}"
+                    Name="RunButton"
+                    Margin="10,0,10,0" 
+                    Click="RunButton_Click"
+                    Width="100">Run</Button>
+            <Separator Width="10" />
+            <TextBox Name="RequestUriStringTextBox" TextWrapping="Wrap" IsReadOnly="True" IsReadOnlyCaretVisible="True" Margin="10,0,10,0" Padding="8" Foreground="#FF0009C3" />
+        </DockPanel>
+
+        <DockPanel Grid.Row="2" Margin="10,10,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2.7*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <GroupBox Name="QueryGroupBox" Grid.Column="0" Grid.Row="0" Header="Query" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0">
+                    <DockPanel>
+                        <TabControl Name="SearchMethodTypeTabControl" SelectionChanged="SearchMethodTypeTabControl_SelectionChanged">
+                            <TabItem Name="QueryMethodTypeTabItem" Header="Query" Selector.IsSelected="True">
+                                <ScrollViewer Background="White">
+                                    <StackPanel Margin="5,5,5,5">
+                                        <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
+                                            <Label Content="Query Text:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+                                        </StackPanel>
+                                        <TextBox Name="QueryTextBox"
+                             Margin="5,0,5,0" 
+                             AcceptsReturn="False"
+                             Height="60"
+                             Padding="4" 
+                             TextWrapping="Wrap" 
+                             DataContext="Query" MouseDoubleClick="QueryDoubleClick"
+                             LostFocus="SearchQueryTextBox_LostFocus_Handler" />
+
+
+
+                                        <StackPanel Margin="5,15,5,0" Orientation="Horizontal">
+                                            <Label Content="Start:" 
+                           HorizontalAlignment="Left" 
+                           VerticalAlignment="Top"/>
+                                            <TextBox Height="26" 
+                                 Margin="5,0,0,0" 
+                                 Text="0" 
+                                 MaxLength="4"
+                                 Padding="4"
+                                 Name="StartRowTextBox"
+                                         DataContext="StartRow"
+                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                 TextAlignment="Center" 
+                                 Width="38">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        A zero-based index of the first search result to be returned.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+
+                                            <Label Content="Row limit:" 
+                               HorizontalAlignment="Left" 
+                               Margin="15,0,0,0" 
+                               VerticalAlignment="Top"/>
+                                            <TextBox HorizontalAlignment="Left" 
+                                 Height="26" 
+                                 Margin="5,0,0,0" 
+                                 MaxLength="4"
+                                 Text="10"
+                                 Padding="4"
+                                 Name="RowsTextBox"
+                                 DataContext="Rows"
+                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                 TextAlignment="Center"
+                                 Width="38">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        The maximum number of search results that we want returned, starting at the index specified in Start.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                            <Label Content="Rows per page:" 
+                                   HorizontalAlignment="Left" 
+                                   Margin="15,0,0,0" 
+                                   VerticalAlignment="Top"/>
+                                            <TextBox HorizontalAlignment="Left" 
+                                     Height="26" 
+                                     Margin="5,0,0,0" 
+                                     MaxLength="4"
+                                     Text="0"
+                                     Padding="4"
+                                     Name="RowsPerPageTextBox"
+                                     DataContext="RowsPerPage"
+                                     LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                     TextAlignment="Center"
+                                     Width="38">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        The number of results to return per page.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </StackPanel>
+
+                                        <Grid Margin="5,15,5,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="10" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Orientation="Vertical">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="EnableStemmingCheckBox" 
+                                                  DataContext="EnableStemming"
+                                                  IsChecked="{x:Null}"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  Checked="SearchQueryCheckBox_CheckChanged">
+                                                        Enable Stemming
+                                                        <CheckBox.ToolTip>
+                                                            <TextBlock>
+                                                Specifies whether inflectional forms of the given tokens are used to locate result items or not.<LineBreak />
+                                                If "true", use of inflectional forms of tokens is used to locate result items.<LineBreak /><LineBreak />
+                                                Example: search queries with the query text "car" return result items containing the token "car" or the token "cars", if such items exist.
+                                                            </TextBlock>
+                                                        </CheckBox.ToolTip>
+                                                    </CheckBox>
+                                                </Grid>
+                                                <Rectangle Height="5" />
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="EnableQueryRulesCheckBox" 
+                                                  DataContext="EnableQueryRules"
+                                                  IsChecked="{x:Null}"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  Checked="SearchQueryCheckBox_CheckChanged"
+                                                  ToolTip="Enable Query Rules">
+                                                        Enable Query Rules
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="EnableNicknamesCheckBox" 
+                                                  DataContext="EnableNicknames"
+                                                  IsChecked="{x:Null}"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  Checked="SearchQueryCheckBox_CheckChanged">
+                                                        Enable Nicknames
+                                                        <CheckBox.ToolTip>
+                                                            <TextBlock>
+                                                Specifies whether the exact tokens in the query text are used to find result items or whether the nicknames of the tokens are considered as well.
+                                                            </TextBlock>
+                                                        </CheckBox.ToolTip>
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="ProcessBestBetsCheckBox" 
+                                                  DataContext="ProcessBestBets"
+                                                  IsChecked="{x:Null}"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  Checked="SearchQueryCheckBox_CheckChanged">
+                                                        Process BestBets
+                                                        <CheckBox.ToolTip>
+                                                            <TextBlock>
+                                                Specifies if the search promoted results should be returned, if available, as a result set.
+                                                            </TextBlock>
+                                                        </CheckBox.ToolTip>
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="ProcessPersonalFavoritesCheckBox" 
+                                             DataContext="ProcessPersonalFavorites"
+                                             IsChecked="{x:Null}"
+                                             Unchecked="SearchQueryCheckBox_CheckChanged"
+                                             Checked="SearchQueryCheckBox_CheckChanged"
+                                             ToolTip="Process Personal Favorites">
+                                                        Process Personal ...
+                                                    </CheckBox>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Orientation="Vertical">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="TrimDuplicatesCheckBox" 
+                                                  DataContext="TrimDuplicates"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  IsChecked="{x:Null}"
+                                                  Checked="SearchQueryCheckBox_CheckChanged"
+                                                  ToolTip="Specifies whether duplicates are removed before sorting, selecting, and returning result items.">
+                                                        Trim Duplicates
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="EnableFqlCheckBox" 
+                                                  DataContext="EnableFql"
+                                                  IsChecked="{x:Null}"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  Checked="SearchQueryCheckBox_CheckChanged"
+                                                  ToolTip="Specifies the type of the query. If true; specifies that the query is specified as a FAST Query Language (FQL) query.">
+                                                        Enable FQL
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="EnablePhoneticCheckBox" 
+                                                  DataContext="EnablePhonetic"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  IsChecked="{x:Null}"
+                                                  Checked="SearchQueryCheckBox_CheckChanged"
+                                                  ToolTip="Specifies whether the phonetic forms of tokens are used to locate result items or not.">
+                                                        Enable Phonetic
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="ByPassResultTypesCheckBox" 
+                                                  DataContext="ByPassResultTypes"
+                                                  IsChecked="{x:Null}"
+                                              ToolTip="Specifies if the search result item type should be returned for the query results."
+                                              Unchecked="SearchQueryCheckBox_CheckChanged"
+                                              Checked="SearchQueryCheckBox_CheckChanged">
+                                                        Bypass Result Types
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="GenerateBlockRankLogCheckBox" 
+                                                  DataContext="GenerateBlockRankLog"
+                                                  IsChecked="{x:Null}"
+                                                  ToolTip="Generate Block Ranklog"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  Checked="SearchQueryCheckBox_CheckChanged">
+                                                        Generate Block Rank
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="25*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="100*"/>
+                                                        <ColumnDefinition Width="52*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Name="IncludeRankDetailCheckBox" 
+                                                  DataContext="IncludeRankDetail"
+                                                  IsChecked="False"
+                                                  ToolTip="Include Rank Detail - Requires admin access!"
+                                                  Unchecked="SearchQueryCheckBox_CheckChanged"
+                                                  Checked="SearchQueryCheckBox_CheckChanged" Grid.ColumnSpan="2">
+                                                        Include Rank Detail
+                                                    </CheckBox>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,10,0,5">
+                                                <Button Content="Reset All Checkboxes" Name="ResetCheckboxesButton" HorizontalAlignment="Left" Click="ResetCheckboxesButton_Click" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Query Template:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+                                            <TextBox Height="26" 
+                                         Margin="5,0,0,0" 
+                                         Text="" 
+                                         Padding="4"
+                                         DataContext="Template"
+                                         Name="QueryTemplateTextBox"
+                                         LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                         TextAlignment="Left" />
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Select Properties:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="SelectProperties" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"></Image>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+                                         Margin="5,0,0,0" 
+                                         Text="" 
+                                         Padding="4"
+                                         DataContext="SelectProperties"
+                                         Name="SelectPropertiesTextBox"
+                                         LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                         TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        Specifies the list of managed properties to return for each search result item.<LineBreak />
+                                        For a managed property to be returned; the Retrievable flag must be set to "true" in the search schema.<LineBreak /><LineBreak />
+                                        Example: Path,Title,Url
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Refiners:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="Refiners" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"></Image>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+                                         Margin="5,0,0,0" 
+                                         Text="" 
+                                         Padding="4"
+                                         Name="RefinersTextBox"
+                                         DataContext="Refiners"
+                                         LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                         TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        Specifies a list of refiners to return as a comma-separated list of strings.<LineBreak /><LineBreak />
+                                        Example: companies(filter=7/0/*),contentclass(filter=7/0/*),ContentType(filter=7/0/*),FileExtension(filter=7/0/*),FileType(filter=7/0/*)
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Refinement Filters:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="RefinementFilters" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"></Image>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+                                         Margin="5,0,0,0" 
+                                         Text="" 
+                                         Padding="4"
+                                         Name="RefinementFiltersTextBox"
+                                         DataContext="RefinementFilters"
+                                         LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                         TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        The list of refinement tokens for drilldown into search results.<LineBreak />
+                                        Refinement tokens are returned as part of the RefinementResults table for the search query.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Sort List:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="SortList" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"></Image>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+                                         Margin="5,0,0,0" 
+                                         Text="" 
+                                         Padding="4"
+                                         Name="SortListTextBox"
+                                         DataContext="SortList"
+                                         LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                         TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        Specifies the list of properties to sort the search results by.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Trim Duplicates Include Id:" 
+                                 HorizontalAlignment="Left" 
+                                 VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                   Margin="5,0,0,0" 
+                                   Text="" 
+                                   Padding="4"
+                                   Name="TrimDuplicatesIncludeIdTextBox"
+                                   DataContext="TrimDuplicatesIncludeId"
+                                   LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                   TextAlignment="Left"
+                                   ToolTip="Id of the document to include duplicates for.">
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Hit Highlighted Properties:" 
+                                               HorizontalAlignment="Left" 
+                                               VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                                 Margin="5,0,0,0" 
+                                                 Text="" 
+                                                 Padding="4"
+                                                 Name="HitHighlightedPropertiesTextBox"
+                                                 DataContext="HitHighlightedProperties"
+                                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                                 TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                                    Specifies the list of properties to include in the HitHighlightedProperties for each result item.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Ranking Model Id:" 
+                                               HorizontalAlignment="Left" 
+                                               VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                 Margin="5,0,0,0" 
+                                 Text="" 
+                                 Padding="4"
+                                 Name="RankingModelIdTextBox"
+                                 DataContext="RankingModelId"
+                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                 ToolTip="The GUID of the ranking model to be used for this search query."
+                                 TextAlignment="Left" />
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Culture:" 
+                           HorizontalAlignment="Left" 
+                           VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                 Margin="5,0,0,0" 
+                                 Text="" 
+                                 Padding="4"
+                                 DataContext="Culture"
+                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                 Name="CultureTextBox"
+                                 TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        Specifies the identifier of the language culture of the search query.<LineBreak />
+                                        If present, the value must be a valid LCID of a culture name.<LineBreak /><LineBreak />
+                                        Example: 1033 for 'en-US'
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Source Id:" 
+                           HorizontalAlignment="Left" 
+                           VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                 Margin="5,0,0,0" 
+                                 Text="" 
+                                 Padding="4"
+                                 Name="SourceIdTextBox"
+                                 DataContext="SourceId"
+                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                 ToolTip="Specifies the unique identifier for result source to use for executing the search query."
+                                 TextAlignment="Left" />
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Hidden Constraints:" 
+                           HorizontalAlignment="Left" 
+                           VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                 Margin="5,0,0,0" 
+                                 Text="" 
+                                 Padding="4"
+                                 Name="HiddenConstraintsTextBox"
+                                 DataContext="HiddenConstraints"
+                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                 TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        Specifies additional query terms that will be appended to the query.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Results Url:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                                 Margin="5,0,0,0" 
+                                                 Text="" 
+                                                 Padding="4"
+                                                 DataContext="ResultsUrl"
+                                                 Name="ResultsUrlTextBox"
+                                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                                 TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                                    Specifies the URL for the page where the search results are going to be displayed.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Collapse Spec:" 
+                                                   ToolTip="Collapse Specifiation"
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                                 Margin="5,0,0,0" 
+                                                 Text="" 
+                                                 Padding="4"
+                                                 DataContext="CollapseSpecifiation"
+                                                 Name="CollapseSpecTextBox"
+                                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                                 TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                                    A set of collapse specifications containing managed properties that are used to determine how to collapse individual search results.<LineBreak />
+                                                    Results are collapsed into one or a specified number of results if they match any of the individual collapse specifications. Within a single<LineBreak />
+                                                    collapse specification, results will be collapsed if their properties match all of the individual properties in the collapse specification.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Query Tag:" 
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <TextBox Height="26" 
+                                                 Margin="5,0,0,0" 
+                                                 Text="" 
+                                                 Padding="4"
+                                                 Name="QueryTagTextBox"
+                                                 DataContext="QueryTag"
+                                                 LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                                 TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                                    Specifies the custom tags to be used to identify the query. Multiple tags must be separated by a semicolon.
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Query Log Client type:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>
+
+                                            <ComboBox Height="26" Margin="5,0,0,0" Padding="4" 
+                                           Name="QueryLogClientTypeComboBox"
+                                           SelectionChanged="QueryLogClientTypeComboBox_SelectionChanged">
+                                                <ComboBoxItem DataContext="Alerts">Alerts</ComboBoxItem>
+                                                <ComboBoxItem DataContext="AllResultsQuery">AllResultsQuery</ComboBoxItem>
+                                                <ComboBoxItem DataContext="CatalogItemReuseQuery">CatalogItemReuseQuery</ComboBoxItem>
+                                                <ComboBoxItem DataContext="ContentSearchHigh">ContentSearchHigh</ComboBoxItem>
+                                                <ComboBoxItem DataContext="ContentSearchLow">ContentSearchLow</ComboBoxItem>
+                                                <ComboBoxItem DataContext="ContentSearchRegular">ContentSearchRegular</ComboBoxItem>
+                                                <ComboBoxItem DataContext="CSOM">CSOM</ComboBoxItem>
+                                                <ComboBoxItem DataContext="Custom">Custom</ComboBoxItem>
+                                                <ComboBoxItem DataContext="DiscoveryDownloadManager">DiscoveryDownloadManager</ComboBoxItem>
+                                                <ComboBoxItem DataContext="DiscoverySearch">DiscoverySearch</ComboBoxItem>
+                                                <ComboBoxItem DataContext="DocsSharedWithMe">DocsSharedWithMe</ComboBoxItem>
+                                                <ComboBoxItem DataContext="Monitoring">Monitoring</ComboBoxItem>
+                                                <ComboBoxItem DataContext="MySiteSecurityTrimmer">MySiteSecurityTrimmer</ComboBoxItem>
+                                                <ComboBoxItem DataContext="MyTaskSync">MyTaskSync</ComboBoxItem>
+                                                <ComboBoxItem DataContext="ObjectModel">ObjectModel</ComboBoxItem>
+                                                <ComboBoxItem DataContext="ObjectModelBackwardsCompatible">ObjectModelBackwardsCompatible</ComboBoxItem>
+                                                <ComboBoxItem DataContext="PeopleResultsQuery">PeopleResultsQuery</ComboBoxItem>
+                                                <ComboBoxItem DataContext="ReportsAndDataResultsQuery">ReportsAndDataResultsQuery</ComboBoxItem>
+                                                <ComboBoxItem DataContext="RSS">RSS</ComboBoxItem>
+                                                <ComboBoxItem DataContext="SearchWebPartConfiguration">SearchWebPartConfiguration</ComboBoxItem>
+                                                <ComboBoxItem DataContext="SEOSiteMapQuery">SEOSiteMapQuery</ComboBoxItem>
+                                                <ComboBoxItem DataContext="SiteResultsQuery_All">SiteResultsQuery_All</ComboBoxItem>
+                                                <ComboBoxItem DataContext="SiteResultsQuery_Docs">SiteResultsQuery_Docs</ComboBoxItem>
+                                                <ComboBoxItem DataContext="SiteResultsQuery_Sites">SiteResultsQuery_Sites</ComboBoxItem>
+                                                <ComboBoxItem DataContext="UI">UI</ComboBoxItem>
+                                                <ComboBoxItem DataContext="Unknown">Unknown</ComboBoxItem>
+                                                <ComboBoxItem DataContext="VideoResultsQuery">VideoResultsQuery</ComboBoxItem>
+                                                <ComboBoxItem DataContext="WebService">WebService</ComboBoxItem>
+                                            </ComboBox>
+                                        </DockPanel>
+
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem Name="SuggestMethodTypeTabItem" Header="Suggest">
+                                <ScrollViewer MaxHeight="480">
+                                    <StackPanel Margin="5,5,5,5">
+                                        <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
+                                            <Label Content="Query Text:" 
+                                               HorizontalAlignment="Left" 
+                                               VerticalAlignment="Top"/>
+                                        </StackPanel>
+                                        <TextBox Name="SuggestionsQueryTextBox"
+                                             Margin="5,0,5,0" 
+                                             AcceptsReturn="False"
+                                             Height="26"
+                                             Padding="4" 
+                                             TextWrapping="Wrap"
+                                             DataContext="Query"
+                                             LostFocus="SearchSuggestionsTextBox_LostFocus_Handler"/>
+
+                                        <DockPanel Margin="5,15,5,0">
+                                            <CheckBox Name="PreQuerySuggestionsCheckBox"
+                                                  Height="20"
+                                                  DataContext="PreQuerySuggestions"
+                                                  Checked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  IsChecked="True">
+                                                Pre Query Suggestions
+                                            </CheckBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <CheckBox Name="PeopleNameSuggestionsCheckBox"
+                                                  Height="20"
+                                                  DataContext="ShowPeopleNameSuggestions"
+                                                  Checked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  IsChecked="True">
+                                                Show People Name Suggestions
+                                            </CheckBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <CheckBox Name="HitHighlightingCheckBox"
+                                                  Height="20"
+                                                  DataContext="HitHighlighting"
+                                                  Checked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  IsChecked="True">
+                                                Hit Highlighting
+                                            </CheckBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <CheckBox Name="CapitalizeFirstLettersCheckBox"
+                                                  Height="20"
+                                                  DataContext="CapitalizeFirstLetters"
+                                                  Checked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+                                                  IsChecked="True">
+                                                Capitalize First Letters
+                                            </CheckBox>
+                                        </DockPanel>
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Number of Query Suggestions:" 
+                                           HorizontalAlignment="Left" 
+                                           VerticalAlignment="Top"/>
+
+                                            <TextBox Height="26" 
+                                                 Margin="5,0,0,0" 
+                                                 Text="" 
+                                                 Padding="4"
+                                                 Name="NumberOfQuerySuggestionsTextBox"
+                                                 ToolTip="The number of query suggestions to retrieve."
+                                                 TextAlignment="Left"
+                                                 DataContext="NumberOfQuerySuggestions"
+                                                 LostFocus="SearchSuggestionsTextBox_LostFocus_Handler">
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Number of Result Suggestions:" 
+                                           HorizontalAlignment="Left" 
+                                           VerticalAlignment="Top"/>
+
+                                            <TextBox Height="26" 
+                                                 Margin="5,0,0,0" 
+                                                 Text="" 
+                                                 Padding="4"
+                                                 Name="NumberOfResultSuggestionsTextBox"
+                                                 ToolTip="The number of personal results to retrieve."
+                                                 TextAlignment="Left"
+                                                 DataContext="NumberOfResultSuggestions"
+                                                 LostFocus="SearchSuggestionsTextBox_LostFocus_Handler">
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Culture:" 
+                                               HorizontalAlignment="Left" 
+                                               VerticalAlignment="Top"/>
+
+                                            <TextBox Height="26" 
+                                                 Margin="5,0,0,0" 
+                                                 Text="" 
+                                                 Padding="4"
+                                                 DataContext="SuggestionsCulture"
+                                                 LostFocus="SearchSuggestionsTextBox_LostFocus_Handler"
+                                                 Name="SuggestionsCultureTextBox"
+                                                 TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock>
+                                        Specifies the identifier of the language culture of the search suggestion query.<LineBreak />
+                                        If present, the value must be a valid LCID of a culture name, as specified in [RFC3066].<LineBreak /><LineBreak />
+                                        Example: 1033 for 'en-US'
+                                                    </TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                    </StackPanel>
+
+                                </ScrollViewer>
+                            </TabItem>
+                        </TabControl>
+                    </DockPanel>
+                </GroupBox>
+
+                <GroupBox Name="ConnectionGroupBox" Grid.Column="0" Grid.Row="1" Header="Connection" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0">
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" MaxHeight="200">
+                        <Grid Margin="5,10,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <DockPanel HorizontalAlignment="Stretch">
+                                <Label Content="SharePoint Site URL:"/>
+                                <Image Name="SharePointSiteUrlAlertImage" Source="Images/alert_icon.png" ToolTip="Invalid Url" Visibility="Hidden" Width="14" Height="14" Margin="5" DockPanel.Dock="Right"></Image>
+                                <TextBox Name="SharePointSiteUrlTextBox" Height="26" 
+                             Margin="5,0,5,0" 
+                             Padding="4"
+                             Text="http://localhost"
+                             LostFocus="SharePointSiteUrlTextBox_LostFocus"
+                             TextAlignment="Left" />
+                            </DockPanel>
+                            <DockPanel Grid.Row="1" Margin="0,10,0,0" HorizontalAlignment="Stretch">
+                                <Label Content="WebRequest Timeout (sec):"/>
+                                <TextBox Name="WebRequestTimeoutTextBox" Height="26" 
+                             Margin="5,0,5,1" 
+                             Text="30" 
+                             Padding="4"
+                             TextAlignment="Left" Width="163"/>
+                            </DockPanel>
+                            <StackPanel Grid.Row="2" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                <Label Content="Accept:"/>
+                                <RadioButton Name="AcceptJsonRadioButton" Content="json" IsChecked="True" VerticalAlignment="Center" GroupName="AcceptFormat" />
+                                <Rectangle Width="10"/>
+                                <RadioButton Name="AcceptXmlRadioButton" Content="xml" VerticalAlignment="Center" GroupName="AcceptFormat" />
+                            </StackPanel>
+                            <DockPanel Grid.Row="3" Margin="0,10,0,0">
+                                <Label Content="Method:" />
+                                <RadioButton VerticalContentAlignment="Center" IsChecked="True" Checked="HttpMethodModeRadioButton_Checked" Name="HttpGetMethodRadioButton" GroupName="HttpMethodMode">HTTP GET</RadioButton>
+                                <RadioButton Margin="5,0,0,0" VerticalContentAlignment="Center" Checked="HttpMethodModeRadioButton_Checked" Name="HttpPostMethodRadioButton" GroupName="HttpMethodMode">HTTP POST</RadioButton>
+                            </DockPanel>
+                            <StackPanel Grid.Row="4" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <Label Content="Authentication:"/>
+                                    <ComboBox Grid.Column="1" 
+                                              SelectedValuePath="Content"
+                                              Padding="4" 
+                                              SelectionChanged="AuthenticationTypeComboBox_SelectionChanged"
+                                              Name="AuthenticationTypeComboBox">
+                                        <ComboBoxItem Content="Authenticate using current user" IsSelected="True" />
+                                        <ComboBoxItem Content="Authenticate using specific user account" />
+                                        <ComboBoxItem Content="Anonymous" />
+                                    </ComboBox>
+
+                                    <Rectangle Height="5" Grid.ColumnSpan="2" Grid.Row="1"></Rectangle>
+
+                                    <Label Grid.Row="2" Content="Authentication Method:"/>
+                                    <ComboBox Grid.Row="2" Grid.Column="1"
+                                          SelectedValuePath="Content"
+                                          IsEnabled="False"
+                                          Padding="4" 
+                                          SelectionChanged="AuthenticationMethodComboBox_SelectionChanged"
+                                          Name="AuthenticationMethodComboBox">
+                                        <ComboBoxItem DataContext="WinAuth" Content="Windows" IsSelected="True" />
+                                        <ComboBoxItem DataContext="FormsAuth" Content="Forms-based" />
+                                        <ComboBoxItem DataContext="SPOAuth" Content="SharePoint Online" />
+                                    </ComboBox>
+
+                                    <Rectangle Height="5" Grid.ColumnSpan="2" Grid.Row="3"></Rectangle>
+
+                                    <Grid Grid.Row="4" Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Name="UsernameAndPasswordTextBoxContainer">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Label  Content="Username:" Width="70"/>
+                                                <TextBox Name="AuthenticationUsernameTextBox" IsEnabled="False" LostFocus="AuthenticationUsernameTextBox_LostFocus" Padding="4" Width="150"></TextBox>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,10">
+                                                <Label  Content="Password:" Width="70"/>
+                                                <PasswordBox Name="AuthenticationPasswordTextBox" IsEnabled="False" LostFocus="AuthenticationPasswordTextBox_LostFocus" Padding="4" Width="150"></PasswordBox>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel Name="SPOLoginButtonContainer" Margin="0,5,0,0" Visibility="Hidden">
+                                            <Button Name="LoginToSPOButton" Content="Sign-in to SP Online" Padding="5" Click="LoginToSPOButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center"></Button>
+                                            <Label Name="LoggedinToSPOLabel" Padding="5" Visibility="Hidden" Content="Successfully signed-in to SP Online" FontWeight="Bold" Foreground="#FF275706"/>
+                                        </StackPanel>
+                                    </Grid>
+
+
+
+                                </Grid>
+
+
+
+                            </StackPanel>
+                            <StackPanel Grid.Row="5" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+
+                            </StackPanel>
+
+                        </Grid>
+                    </ScrollViewer>
+                </GroupBox>
+                <GroupBox Name="ConnectionSignalR" Grid.Column="0" Grid.Row="2" Header="SignalR" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0">
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" MaxHeight="200">
+                        <Grid Margin="5,10,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <DockPanel HorizontalAlignment="Stretch" Grid.Row="0">
+                                <Label Content="SignalR Hub URL:"/>
+                                <Image Name="SignalRUrlImage" Source="Images/alert_icon.png" ToolTip="Invalid Url" Visibility="Hidden" Width="14" Height="14" Margin="5" DockPanel.Dock="Right"></Image>
+                                <TextBox Name="SignalRHubUrlTextBox" Height="26" 
+                             Margin="5,0,5,0" 
+                             Padding="4"
+                             Text="http://sharepoint2013:8080"
+                             LostFocus="SharePointSiteUrlTextBox_LostFocus"
+                             TextAlignment="Left" />
+                            </DockPanel>
+                            <DockPanel Grid.Row="1">
+                                <Label Content=""></Label>
+                                <Button Name="ConnectToSignalR" Click="ConnectToSignalR_OnClick" Content="Connect"></Button>
+                            </DockPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </GroupBox>
+            </Grid>
+        </DockPanel>
+
+        <GroupBox Grid.Row="2" Grid.Column="1" Header="Results" Margin="20,10,10,10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <DockPanel>
+                <TextBlock Name="ResultsTextBlock"></TextBlock>
+                <TabControl>
+                    <TabItem Header="Status" Name="StatsResultTabItem" Width="60"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True">
+                    </TabItem>
+                    <TabItem Header="Raw" Name="RawResultTabItem" Width="60"
+                             ScrollViewer.CanContentScroll="True"
+                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    </TabItem>
+                    <TabItem Header="Primary Results" Name="PrimaryResultsTabItem" Width="100" 
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    </TabItem>
+                    <TabItem Header="Refinement Res..." ToolTip="Refinement Results" Name="RefinementResultsTabItem" Width="100" 
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    </TabItem>
+                    <TabItem Header="Secondary Res..." ToolTip="Secondary Results" Name="SecondaryResultsTabItem" Width="100" 
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    </TabItem>
+                    <TabItem Header="Suggestion Res..." ToolTip="Suggestion Results" Name="SuggestionResultsTabItem" Width="100" 
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    </TabItem>
+                    <TabItem Header="Debug" ToolTip="Debug Query" Name="DebugTabItem" Width="60" IsEnabled="False">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <ItemsControl Margin="10" Name="DebugGrid" >
+                                <ItemsControl.Template>
+                                    <ControlTemplate TargetType="ItemsControl">
+                                        <ItemsPresenter/>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Black" BorderThickness="1" Margin="0 0 0 5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <Label VerticalAlignment="Top" Grid.Row="0" Grid.Column="0">Query:</Label>
+                                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Margin="3,0,3,7" Text="{Binding Query}"/>
+
+                                                <Expander Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="View" HorizontalAlignment="Left">
+                                                    <Grid HorizontalAlignment="Left">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="110"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                        </Grid.RowDefinitions>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="0" Grid.Column="0">Template:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="3,0,3,7" Text="{Binding Template}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">Hidden Constraint:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="3,0,3,7" Text="{Binding HiddenConstraint}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="2" Grid.Column="0">SiteSubscriptionId:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="3,0,3,7" Text="{Binding SiteSubscriptionId}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="3" Grid.Column="0" Margin="0,-7,0,7">Bound Variables:</Label>
+                                                        <ListBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding BoundVariables, Mode=OneWay}">
+                                                            <ListBox.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,-7,7" Width="450" Text="{Binding Mode=OneWay}"/>
+                                                                </DataTemplate>
+                                                            </ListBox.ItemTemplate>
+                                                        </ListBox>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="4" Grid.Column="0" Margin="0,-7,0,7">Template Helper:</Label>
+                                                        <ListBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding QueryTemplateHelper, Mode=OneWay}">
+                                                            <ListBox.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,-7,7" Width="450" Text="{Binding Mode=OneWay}"/>
+                                                                </DataTemplate>
+                                                            </ListBox.ItemTemplate>
+                                                        </ListBox>
+
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="5" Grid.Column="0">Relevant Results:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="3,0,3,7" Text="{Binding RelevantResults}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="6" Grid.Column="0">Personal Results:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="6" Grid.Column="1" Margin="3,0,3,7" Text="{Binding PersonalResults}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="7" Grid.Column="0">Refiner Results:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1" Margin="3,0,3,7" Text="{Binding RefinerResults}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="8" Grid.Column="0">Query Suggestion:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="8" Grid.Column="1" Margin="3,0,3,7" Text="{Binding QuerySuggestion}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="9" Grid.Column="0">QueryExpanded1:</Label>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="9" Grid.Column="1" Margin="3,0,3,7" HorizontalAlignment="Left" Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded1}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="10" Grid.Column="0">QueryExpanded2:</Label>
+                                                        <TextBox Margin="3,0,3,7" Grid.Row="10"  Grid.Column="1" IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left"  Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded2And3}"/>
+                                                    </Grid>
+                                                </Expander>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </TabItem>
+
+                </TabControl>
+            </DockPanel>
+        </GroupBox>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2">
+            <StatusBar Margin="10,0,10,0" Background="{x:Null}" BorderBrush="Gray">
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem>
+                    <DockPanel>
+                        <TextBlock Name="StateBarTextBlock" Text="Ready"></TextBlock>
+                        <ProgressBar Name="ProgressBar" Value="0" Width="100" Visibility="Hidden" IsIndeterminate="False" Orientation="Horizontal" Height="18" Margin="15,0,0,0"/>
+                    </DockPanel>
+                </StatusBarItem>
+            </StatusBar>
+        </StackPanel>
+    </Grid>
+</Window>

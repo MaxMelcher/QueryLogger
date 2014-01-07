@@ -63,6 +63,8 @@ namespace MaxMelcher.QueryLogger.Monitor
 
                 _watcherFolder.Created += (sender, args) =>
                 {
+                    if (args.FullPath.StartsWith("PSCDiagnostics")) return;
+
                     Console.WriteLine("File {0} created", args.FullPath);
                     LogFilePath = args.FullPath;
 

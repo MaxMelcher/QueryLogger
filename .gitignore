@@ -31,3 +31,4 @@ _ReSharper*/
 #nuget
 packages/
 *.nupkg
+*.gpState

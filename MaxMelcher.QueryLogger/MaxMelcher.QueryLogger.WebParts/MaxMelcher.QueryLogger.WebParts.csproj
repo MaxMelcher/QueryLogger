@@ -42,10 +42,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -53,13 +55,21 @@
     <Reference Include="Microsoft.SharePoint.Client.ServerRuntime" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OthersAreSearching\OthersAreSearching.cs" />
+    <Compile Include="OthersAreSearching\OthersAreSearchingUserControl.ascx.cs">
+      <DependentUpon>OthersAreSearchingUserControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OthersAreSearching\OthersAreSearchingUserControl.ascx.designer.cs">
+      <DependentUpon>OthersAreSearchingUserControl.ascx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VisualWebPart2\VisualWebPart2.cs" />
-    <Compile Include="VisualWebPart2\VisualWebPart2UserControl.ascx.cs">
+    <Compile Include="ULSWebPart\VisualWebPart2.cs" />
+    <Compile Include="ULSWebPart\VisualWebPart2UserControl.ascx.cs">
       <DependentUpon>VisualWebPart2UserControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="VisualWebPart2\VisualWebPart2UserControl.ascx.designer.cs">
+    <Compile Include="ULSWebPart\VisualWebPart2UserControl.ascx.designer.cs">
       <DependentUpon>VisualWebPart2UserControl.ascx.cs</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -71,27 +81,51 @@
     <None Include="Layouts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{d16acfe2-d0e6-41d6-8d14-2f4db16a0c7f}</SharePointProjectItemId>
     </None>
+    <None Include="OthersAreSearching\OthersAreSearching.webpart" />
+    <None Include="OthersAreSearching\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{eed33cf2-f97d-4bc2-b8e8-003d8e12b792}</SharePointProjectItemId>
+    </None>
+    <None Include="packages.config" />
     <None Include="Package\Package.package">
       <PackageId>{27abc9bb-4b6a-4820-93f3-e4580a4029a5}</PackageId>
     </None>
     <None Include="Package\Package.Template.xml">
       <DependentUpon>Package.package</DependentUpon>
     </None>
-    <None Include="VisualWebPart2\SharePointProjectItem.spdata">
+    <None Include="Scripts\jquery-2.0.3.min.map" />
+    <None Include="ULSWebPart\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{ed932546-889a-4912-a714-288395fd4237}</SharePointProjectItemId>
     </None>
-    <None Include="VisualWebPart2\VisualWebPart2.webpart" />
+    <None Include="ULSWebPart\VisualWebPart2.webpart">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Features\Feature1\Feature1.Template.xml">
       <DependentUpon>Feature1.feature</DependentUpon>
     </Content>
+    <Content Include="Layouts\MaxMelcher.QueryLogger.WebParts\jquery-2.0.3.min.js" />
+    <Content Include="Layouts\MaxMelcher.QueryLogger.WebParts\jquery.color-2.1.2.min.js" />
     <Content Include="Layouts\MaxMelcher.QueryLogger.WebParts\jquery.js" />
     <Content Include="Layouts\MaxMelcher.QueryLogger.WebParts\jquery.signalR-2.0.0.min.js" />
+    <Content Include="Layouts\MaxMelcher.QueryLogger.WebParts\knockout-3.0.0.js" />
     <Content Include="Layouts\MaxMelcher.QueryLogger.WebParts\mustache.js" />
     <Content Include="Layouts\MaxMelcher.QueryLogger.WebParts\stream_table.min.js" />
-    <Content Include="VisualWebPart2\Elements.xml" />
-    <Content Include="VisualWebPart2\VisualWebPart2UserControl.ascx" />
+    <Content Include="OthersAreSearching\Elements.xml" />
+    <Content Include="OthersAreSearching\OthersAreSearchingUserControl.ascx" />
+    <Content Include="Scripts\jquery-2.0.3.intellisense.js" />
+    <Content Include="Scripts\jquery-2.0.3.js" />
+    <Content Include="Scripts\jquery-2.0.3.min.js" />
+    <Content Include="Scripts\jquery.color-2.1.2.js" />
+    <Content Include="Scripts\jquery.color-2.1.2.min.js" />
+    <Content Include="Scripts\jquery.color.svg-names-2.1.2.js" />
+    <Content Include="Scripts\jquery.color.svg-names-2.1.2.min.js" />
+    <Content Include="Scripts\knockout-3.0.0.debug.js" />
+    <Content Include="Scripts\knockout-3.0.0.js" />
+    <Content Include="ULSWebPart\Elements.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ULSWebPart\VisualWebPart2UserControl.ascx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

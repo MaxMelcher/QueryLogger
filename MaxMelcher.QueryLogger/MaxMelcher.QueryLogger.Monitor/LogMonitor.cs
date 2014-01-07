@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using MaxMelcher.QueryLogger.Monitor.Properties;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Client;
 using MaxMelcher.QueryLogger.Utils;
@@ -13,7 +15,9 @@ namespace MaxMelcher.QueryLogger.Monitor
     {
         public string LogFilePath { get; set; }
         public readonly TaskCompletionSource<object> _tcs = new TaskCompletionSource<object>();
-        public CancellationTokenSource _cts;
+        public CancellationTokenSource Cts;
+        
+
 
         readonly char[] _seperators = { '\r', '\n' };
 
@@ -31,13 +35,14 @@ namespace MaxMelcher.QueryLogger.Monitor
         public Task Start()
         {
             Console.WriteLine("Starting LogMonitor for file: {0}", LogFilePath);
-            _cts = new CancellationTokenSource();
-            LogMonitorTask = Task.Factory.StartNew(Watch,_cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            Cts = new CancellationTokenSource();
 
-            var hubConnection = new HubConnection("http://sharepoint2013:8080");
+            var hubConnection = new HubConnection(Settings.Default.ServerUrl);
 
             hub = hubConnection.CreateHubProxy("UlsHub");
             hubConnection.Start().Wait();
+
+            LogMonitorTask = Task.Factory.StartNew(Watch,Cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             return _tcs.Task;
         }
@@ -52,7 +57,7 @@ namespace MaxMelcher.QueryLogger.Monitor
                     {
                         reader.ReadToEnd();
                         string cache = String.Empty;
-                        while (!_cts.IsCancellationRequested)
+                        while (!Cts.IsCancellationRequested)
                         {
                             Thread.Sleep(1000);
                             if (reader.EndOfStream)
@@ -67,9 +72,8 @@ namespace MaxMelcher.QueryLogger.Monitor
 
                             foreach (string line in lines.Take(validLines))
                             {
-                                
                                 LogEntry logentry = LogEntry.Parse(line);
-                                Console.WriteLine("{0} {1} {2}", logentry.Timestamp, logentry.Process, logentry.Thread);
+                                Console.WriteLine("{0} {1} {2}", logentry.Timestamp, logentry.Process, logentry.Message);
                                 hub.Invoke("Notify", logentry);
                             }
                         }
@@ -89,7 +93,7 @@ namespace MaxMelcher.QueryLogger.Monitor
         public void Stop()
         {
             Console.WriteLine("Stopping LogMonitor");            
-            _cts.Cancel();
+            Cts.Cancel();
         }
     }
 }

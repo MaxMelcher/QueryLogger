@@ -19,18 +19,8 @@ namespace MaxMelcher.QueryLogger.SignalrConsoleHost
                 Console.ReadLine();
             }
         }
-
-        
-        
     }
-    public class UlsHub : Hub
-    {
-        public void Notify(LogEntry message)
-        {
-            Console.WriteLine("Message: {0}", message);
-            Clients.All.addMessage(message);
-        }
-    }
+    
 
     class Startup
     {

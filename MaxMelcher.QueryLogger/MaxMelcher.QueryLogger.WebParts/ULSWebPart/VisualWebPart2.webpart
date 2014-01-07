@@ -7,8 +7,8 @@
     </metaData>
     <data>
       <properties>
-        <property name="Title" type="string">MaxMelcher.QueryLogger.WebParts - VisualWebPart2</property>
-        <property name="Description" type="string">My Visual Web Part</property>
+        <property name="Title" type="string">Real-time ULS Viewer WebPart</property>
+        <property name="Description" type="string">Show the entire uls stream - configure the SignalrHub Property in the WebPart Property</property>
       </properties>
     </data>
   </webPart>
