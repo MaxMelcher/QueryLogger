@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MaxMelcher.QueryLogger.Utils</id>
+    <version>0.9.0.0</version>
+    <title>MaxMelcher.QueryLogger.Utils</title>
+    <authors>Max Melcher</authors>
+    <owners>Max Melcher</owners>
+    <licenseUrl>https://github.com/MaxMelcher/QueryLogger/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/MaxMelcher/QueryLogger</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Utils class for the real-time Uls Log parser. Contains the LogEntry class and the ULSHub class.</description>
+    <releaseNotes>Initial release to make it compatible with the Search Query Tool</releaseNotes>
+    <copyright>Copyright Max Melcher 2014</copyright>
+    <tags>SharePoint2013, ULS, SignalR</tags>
+  </metadata>
+</package>
